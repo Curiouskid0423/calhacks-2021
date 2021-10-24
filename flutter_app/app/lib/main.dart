@@ -1,10 +1,8 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 void main() {
@@ -53,9 +51,8 @@ class _DemoDashboardState extends State<DemoDashboard> {
               height: 90,
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Image.network(
-                    'https://cdn-icons.flaticon.com/png/512/2592/premium/2592258.png?token=exp=1635113913~hmac=a15ccb9d49aeea0f50fbb48ccd47e847',
-                    height: 60),
+                child:
+                    Image.asset('./lib/assets/images/security.png', height: 60),
               ),
             ),
             ElevatedButton(
