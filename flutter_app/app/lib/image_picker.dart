@@ -75,7 +75,13 @@ class Result1 extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[Text("Result sent to server for inference.")],
+          children: <Widget>[
+            Text("Result sent to server for inference."),
+            Text("Task:   Face Detection",
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text("Key (Developer Use): @yoyoingcolourful",
+                style: const TextStyle(fontWeight: FontWeight.bold))
+          ],
         ),
       ),
     );

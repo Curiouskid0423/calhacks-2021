@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:at_onboarding_flutter/at_onboarding_flutter.dart';
+import 'package:at_client_mobile/at_client_mobile.dart';
+import 'package:at_utils/at_logger.dart';
+
 import '/UI/input_field.dart';
 import '/landing.dart';
+import 'service/client_sdk_service.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -11,6 +16,25 @@ class Login extends StatefulWidget {
 }
 
 class LoginState extends State<Login> {
+  String? atSign;
+  ClientSdkService clientSDKInstance = ClientSdkService.getInstance();
+  AtClientPreference? atClientPreference;
+  final AtSignLogger _logger = AtSignLogger('Plugin example app');
+  final ROOT_DOMAIN = 'root.atsign.org';
+  final prodAPIKey = '400b-806u-bzez-z42z-6a3p'; // Fake API key
+
+  Future<void> call() async {
+    await clientSDKInstance
+        .getAtClientPreference()
+        .then((AtClientPreference? value) => atClientPreference = value);
+  }
+
+  @override
+  void initState() {
+    call();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,8 +79,7 @@ class LoginState extends State<Login> {
                         )),
                     Form(
                       child: InputField(
-                          //Calling inputField  class
-
+                          //Calling inputField class
                           const Icon(
                             Icons.person,
                             color: Colors.white,
@@ -72,27 +95,57 @@ class LoginState extends State<Login> {
                           "Password"),
                     ),
                     Container(
-                      width: 150,
-                      child: RaisedButton(
-                        //Raised Button
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  const DemoDashboard(title: 'CypherAI')));
-                        },
-                        color: Colors.indigo,
-                        textColor: Colors.white,
-                        child: const Text(
-                          "Login",
-                          style: TextStyle(fontSize: 20.0),
+                        width: 150,
+                        child: TextButton(
+                          onPressed: () async {
+                            Onboarding(
+                              context: context,
+                              atClientPreference: atClientPreference!,
+                              domain: ROOT_DOMAIN,
+                              appColor: const Color(0xFFF05E3E),
+                              onboard: (Map<String?, AtClientService> value,
+                                  String? atsign) {
+                                atSign = atsign;
+                                clientSDKInstance.atsign = atsign!;
+                                clientSDKInstance.atClientServiceMap = value;
+                                clientSDKInstance.atClientServiceInstance =
+                                    value[atsign];
+                                _logger.finer('Successfully onboarded $atsign');
+                              },
+                              onError: (Object? error) {
+                                _logger
+                                    .severe('Onboarding throws $error error');
+                              },
+                              nextScreen: DemoDashboard(title: "Cypher AI"),
+                              appAPIKey: prodAPIKey,
+                              rootEnvironment: RootEnvironment.Production,
+                            );
+                          },
+                          child: const Text("Login",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
+                        )
+                        // child: RaisedButton(
+                        //   //Raised Button
+                        //   onPressed: () {
+                        //     Navigator.of(context).push(MaterialPageRoute(
+                        //         builder: (context) =>
+                        //             const DemoDashboard(title: 'CypherAI')));
+                        //   },
+                        //   color: Colors.indigo,
+                        //   textColor: Colors.white,
+                        //   child: const Text(
+                        //     "Login",
+                        //     style: TextStyle(fontSize: 20.0),
+                        //   ),
+                        //   shape: const RoundedRectangleBorder(
+                        //     borderRadius: BorderRadius.all(
+                        //       Radius.circular(10.0),
+                        //     ),
+                        //   ),
+                        // ),
                         ),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10.0),
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
